@@ -3,15 +3,14 @@ package net.voxelmine.tileentity;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import net.voxelmine.entity.Inventory;
 import net.voxelmine.entity.InventoryChest;
 
 public class ChestTileEntity implements ITileEntity {
-	private Inventory inventory = new InventoryChest(12);
-	public Inventory getInventory() {
+	private InventoryChest inventory = new InventoryChest(12);
+	public InventoryChest getInventory() {
 		return inventory;
 	}
-	public void setInventory(Inventory inventory) {
+	public void setInventory(InventoryChest inventory) {
 		this.inventory = inventory;
 	}
 	@Override

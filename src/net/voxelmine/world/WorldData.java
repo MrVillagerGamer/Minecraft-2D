@@ -10,6 +10,7 @@ import net.voxelmine.blocks.BlockPos;
 import net.voxelmine.chunk.Chunk;
 import net.voxelmine.entity.EntityPlayer;
 import net.voxelmine.entity.EntityPos;
+import net.voxelmine.entity.ItemStack;
 import net.voxelmine.items.Item;
 import net.voxelmine.main.Voxelmine;
 import net.voxelmine.tileentity.ITileEntity;
@@ -21,7 +22,7 @@ public class WorldData implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	public float playerX, playerY;
-	public int[] invItems, invCounts;
+	public ItemStack[] inv;
 	public int[][][] blocks;
 	public int[][] biomes;
 	public long seed;
@@ -33,12 +34,7 @@ public class WorldData implements Serializable{
 		EntityPlayer player = inst.getPlayer();
 		player.setLocation(new EntityPos(data.playerX, data.playerY));
 		for(int i = 0; i < 36; i++) {
-			player.getInventory().setCount(i, data.invCounts[i]);
-			if(data.invItems[i] != -1) {
-				player.getInventory().setId(i, data.invItems[i]);
-			}else {
-				player.getInventory().setId(i, 0);
-			}
+			player.getInventory().setStack(i, data.inv[i]);
 		}
 		for(int x = 0; x < World.SIZE*Chunk.SIZE; x++) {
 			for(int y = 0; y < Chunk.HEIGHT; y++) {
@@ -67,11 +63,9 @@ public class WorldData implements Serializable{
 		WorldData data = new WorldData();
 		data.playerX = Voxelmine.getInstance().getPlayer().getLocation().getX();
 		data.playerY = Voxelmine.getInstance().getPlayer().getLocation().getY();
-		data.invItems = new int[36];
-		data.invCounts = new int[36];
+		data.inv = new ItemStack[36];
 		for(int i = 0; i < 36; i++) {
-			data.invItems[i] = player.getInventory().getId(i);
-			data.invCounts[i] = player.getInventory().getCount(i);
+			data.inv[i] = player.getInventory().getStack(i);
 		}
 		data.blocks = new int[World.SIZE*Chunk.SIZE][Chunk.HEIGHT][Chunk.DEPTH];
 		data.biomes = new int[World.SIZE*Chunk.SIZE][Chunk.HEIGHT];

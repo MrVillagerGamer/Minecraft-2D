@@ -18,6 +18,8 @@ import net.voxelmine.gui.screen.Screen;
 import net.voxelmine.input.Input;
 import net.voxelmine.items.Item;
 import net.voxelmine.main.Voxelmine;
+import net.voxelmine.tileentity.ITileEntity;
+import net.voxelmine.tileentity.ITileEntityProvider;
 import net.voxelmine.world.World;
 
 public class EntityPlayer extends Entity{
@@ -121,11 +123,12 @@ public class EntityPlayer extends Entity{
 			mb3lock = true;
 			if(Block.get(world.getBlock(mouseBlock)).getRenderMode() != BlockRenderMode.EMPTY) Block.get(world.getBlock(mouseBlock)).onInteract(mouseBlock);
 			int sel = inv.getSelectedSlot();
-			int selItem = inv.getId(sel);
-			int selCount = inv.getCount(sel);
+			int selItem = inv.getStack(sel).getItem();
+			int selCount = inv.getStack(sel).getCount();
+			String selJsonData = inv.getStack(sel).getJsonData();
 			if(selCount > 0 && Item.get(selItem) != null && Block.get(selItem) != null) {
-				if(placeBlock(mouseBlockFront, selItem)) {
-					inv.setCount(sel, selCount-1);
+				if(placeBlock(mouseBlockFront, selItem, selJsonData)) {
+					inv.getStack(sel).setCount(selCount-1);
 				}
 			}
 		}
@@ -135,7 +138,7 @@ public class EntityPlayer extends Entity{
 				breakTime += delta;
 				int bb = getBlock(mouseBlock);
 				if(breakTime >= computeDestroyTime(bb)) {
-					inv.addItems(Block.get(bb).getDrop(), 1);
+					inv.addItems(Block.get(bb).getDrop(mouseBlock));
 					breakBlock(mouseBlock);
 					breakTime = 0;
 					breakLoc = new BlockPos(0, 0);
@@ -174,13 +177,16 @@ public class EntityPlayer extends Entity{
 			}
 		}
 	}
-	public boolean placeBlock(BlockPos mouseBlock, int block) {
+	public boolean placeBlock(BlockPos mouseBlock, int block, String jsonData) {
 		World world = Voxelmine.getInstance().getWorld();
 		BlockPos pos = mouseBlock;
 		if(pos.getZ() >= 0 && pos.getZ() < Chunk.DEPTH && Block.get(world.getBlock(pos)) != null && Block.get(world.getBlock(pos)).getRenderMode() == BlockRenderMode.EMPTY) {
 			BlockPos pos2 = new BlockPos(pos.getX(), pos.getY(), pos.getZ());
-			
 			world.setBlock(pos2, block);
+			ITileEntity te = world.getTileEntity(pos2);
+			if(te != null) {
+				te.readJson(jsonData);
+			}
 			return true;
 		}
 		return false;
@@ -201,7 +207,7 @@ public class EntityPlayer extends Entity{
 		return bb;
 	}
 	private float computeDestroyTime(int block) {
-		return computeDestroyTime(block, inv.getId(inv.getSelectedSlot()));
+		return computeDestroyTime(block, inv.getStack(inv.getSelectedSlot()).getItem());
 	}
 	private float computeDestroyTime(int blockId, int selItemId) {
 		Block block = Block.get(blockId);

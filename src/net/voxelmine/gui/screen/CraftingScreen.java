@@ -79,24 +79,24 @@ public class CraftingScreen extends Screen {
 		craftButton.update();
 		if(craftButton.clicked()) {
 			int[] items = new int[] {
-				craftingInventory.getId(0),
-				craftingInventory.getId(1),
-				craftingInventory.getId(2),
-				craftingInventory.getId(3),
-				craftingInventory.getId(4),
-				craftingInventory.getId(5),
-				craftingInventory.getId(6),
-				craftingInventory.getId(7),
-				craftingInventory.getId(8),	
+				craftingInventory.getStack(0).getItem(),
+				craftingInventory.getStack(1).getItem(),
+				craftingInventory.getStack(2).getItem(),
+				craftingInventory.getStack(3).getItem(),
+				craftingInventory.getStack(4).getItem(),
+				craftingInventory.getStack(5).getItem(),
+				craftingInventory.getStack(6).getItem(),
+				craftingInventory.getStack(7).getItem(),
+				craftingInventory.getStack(8).getItem(),	
 			};
 			EntityPlayer player = Voxelmine.getInstance().getPlayer();
 			Recipe recipe = Recipe.getMatchingRecipe(items, RecipeType.CRAFTING);
 			if(recipe != null) {
-				player.getInventory().addItems(recipe.getResult(), recipe.getCount());
+				player.getInventory().addItems(recipe.getResult());
 				for(int i = 0; i < 9; i++) {
-					if(craftingInventory.getCount(i) > 0) {
-						craftingInventory.setCount(i, craftingInventory.getCount(i)-1);
-						if(craftingInventory.getCount(i) == 0) craftingInventory.setId(i, 0);
+					if(craftingInventory.getStack(i).getCount() > 0) {
+						craftingInventory.getStack(i).setCount(craftingInventory.getStack(i).getCount()-1);
+						if(craftingInventory.getStack(i).getCount() == 0) craftingInventory.getStack(i).setItem(0);
 					}
 				}
 			}

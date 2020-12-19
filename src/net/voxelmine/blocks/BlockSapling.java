@@ -4,8 +4,8 @@ import net.voxelmine.main.Voxelmine;
 import net.voxelmine.world.World;
 
 public class BlockSapling extends Block{
-	public BlockSapling(int id, BlockRenderMode renderMode, int texX, int texY) {
-		super(id, renderMode, texX, texY);
+	public BlockSapling(int id, Material mat, int texX, int texY) {
+		super(id, mat, texX, texY);
 	}
 	@Override
 	public void onInteract(BlockPos pos) {

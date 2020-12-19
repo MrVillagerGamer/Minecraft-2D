@@ -29,8 +29,8 @@ public class GuiSlotGroup extends GuiComponent {
 			int cx = 20 * (i % cols);
 			int cy = 20 * (i / cols);
 			slots[i] = new GuiSlot(align, x+cx, y+cy);
-			slots[i].setId(inv.getId(i));
-			slots[i].setCount(inv.getCount(i));
+			slots[i].setId(inv.getStack(i).getItem());
+			slots[i].setCount(inv.getStack(i).getCount());
 		}
 		selSlot = inv.getSelectedSlot();
 	}
@@ -70,8 +70,8 @@ public class GuiSlotGroup extends GuiComponent {
 			}
 		}
 		for(int i = 0; i < slots.length; i++) {
-			slots[i].setId(inv.getId(i));
-			slots[i].setCount(inv.getCount(i));
+			slots[i].setId(inv.getStack(i).getItem());
+			slots[i].setCount(inv.getStack(i).getCount());
 			if(i == movedSlot && inv == movedInv) {
 				movedItem = slots[i].getId();
 				slots[i].setId(0);
@@ -104,11 +104,9 @@ public class GuiSlotGroup extends GuiComponent {
 			int x1 = Input.getMouseX()-6;
 			int y1 = Input.getMouseY()-6;
 			g.drawImage(img, x1, y1, bsz, bsz, null);
-			g.setColor(new Color(0, 0, 0, 0.33f));
-			g.fillRect(x1, y1, bsz, bsz);
 			g.setColor(Color.BLACK);
-			int slen = Integer.toString(inv.getCount(movedSlot)).length()==1?8:2;
-			g.drawString(Integer.toString(inv.getCount(movedSlot)), x1+slen*sz, y1+14*sz);
+			int slen = Integer.toString(inv.getStack(movedSlot).getCount()).length()==1?8:2;
+			g.drawString(Integer.toString(inv.getStack(movedSlot).getCount()), x1+slen*sz, y1+14*sz);
 		}
 	}
 }

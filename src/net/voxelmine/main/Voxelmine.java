@@ -50,6 +50,7 @@ public class Voxelmine {
 		try {
 			Logger.info("Generating world.");
 			// 969971589
+			// -765495904
 			int seed = new Random().nextInt();
 			System.out.println(seed);
 			world = new World((long) seed, new BiomeProviderImpl(),new BlockProviderImpl());

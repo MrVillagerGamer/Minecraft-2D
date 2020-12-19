@@ -3,8 +3,8 @@ package net.voxelmine.blocks;
 import net.voxelmine.gui.screen.Screen;
 
 public class BlockWorkbench extends Block{
-	public BlockWorkbench(int id, BlockRenderMode renderMode, int texX, int texY) {
-		super(id, renderMode, texX, texY);
+	public BlockWorkbench(int id, Material mat, int texX, int texY) {
+		super(id, mat, texX, texY);
 	}
 	@Override
 	public void onInteract(BlockPos pos) {

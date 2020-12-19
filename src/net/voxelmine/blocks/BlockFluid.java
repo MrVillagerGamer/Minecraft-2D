@@ -2,8 +2,8 @@ package net.voxelmine.blocks;
 
 public class BlockFluid extends Block {
 	private BlockState[] states;
-	public BlockFluid(int id, BlockRenderMode renderMode, int texX, int texY) {
-		super(id, renderMode, texX, texY);
+	public BlockFluid(int id, Material mat, int texX, int texY) {
+		super(id, mat, texX, texY);
 		states = new BlockState[16];
 		for(int i = 0; i < 16; i++) {
 			ModelData model = new ModelData(new ModelPiece(0, 1f/8f*(i/2), 1, 1, texX, texY));

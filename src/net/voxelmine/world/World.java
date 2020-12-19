@@ -18,9 +18,10 @@ import net.voxelmine.main.Voxelmine;
 import net.voxelmine.tileentity.ITileEntity;
 import net.voxelmine.tileentity.ITileEntityProvider;
 import net.voxelmine.util.ITickable;
+import net.voxelmine.world.gen.Feature;
 
 public class World {
-	public static final int SIZE = 16;
+	public static final int SIZE = 32;
 	private static Chunk[] chunks = new Chunk[SIZE];
 	private BlockProvider blockProvider;
 	private BiomeProvider biomeProvider;
@@ -46,6 +47,11 @@ public class World {
 		}
 		for(int i = 0; i < SIZE; i++) {
 			chunks[i].generateBlockMap(blockProvider);
+		}
+		for(Feature feature : Feature.FEATURES) {
+			if(feature != null) {
+				feature.generate();
+			}
 		}
 		generateLightMaps();
 	}
@@ -148,7 +154,12 @@ public class World {
 	}
 	public void render(Graphics2D g) {
 		EntityPos off = Voxelmine.getInstance().getPlayer().getLocation();
-		for(Chunk chunk : chunks) {
+		int maxDist = Voxelmine.WIDTH/Block.RENDER_SIZE/Chunk.SIZE+1;
+		for(int i = 0; i < chunks.length; i++) {
+			if((int)off.getX()/Chunk.SIZE-maxDist > i || (int)off.getX()/Chunk.SIZE+maxDist < i) {
+				continue;
+			}
+			Chunk chunk = chunks[i];
 			int sx = (int)off.getX() - Voxelmine.WIDTH/Block.RENDER_SIZE;
 			int ex = (int)off.getX() + Voxelmine.WIDTH/Block.RENDER_SIZE;
 			int sy = (int)off.getY() - Voxelmine.HEIGHT/Block.RENDER_SIZE;
@@ -173,5 +184,15 @@ public class World {
 				((ITickable)e.getValue()).tick();
 			}
 		}
+	}
+	public int getHighest(int x, int z) {
+		int height = 0;
+		for(int i = Chunk.HEIGHT-1; i >= 0; i--) {
+			if(Block.get(getBlock(new BlockPos(x, i, z))).getRenderMode() != BlockRenderMode.EMPTY) {
+				height = i;
+				break;
+			}
+		}
+		return height;
 	}
 }

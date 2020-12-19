@@ -2,6 +2,7 @@ package net.voxelmine.recipe;
 
 import java.util.ArrayList;
 
+import net.voxelmine.entity.ItemStack;
 import net.voxelmine.items.Item;
 
 public class Recipe {
@@ -130,14 +131,12 @@ public class Recipe {
 	private int[] pattern;
 	private RecipeMode mode;
 	private RecipeType type;
-	private int result;
-	private int count;
+	private ItemStack result;
 	public Recipe(RecipeType type, int[] pattern, RecipeMode mode, int result, int count) {
 		this.type = type;
 		this.pattern = pattern;
 		this.mode = mode;
-		this.result = result;
-		this.count = count;
+		this.result = new ItemStack(result, count);
 		RECIPES.add(this);
 	}
 	public int[] getPattern() {
@@ -146,11 +145,8 @@ public class Recipe {
 	public RecipeMode getMode() {
 		return mode;
 	}
-	public int getResult() {
-		return result;
-	}
-	public int getCount() {
-		return count;
+	public ItemStack getResult() {
+		return new ItemStack(result);
 	}
 	public RecipeType getType() {
 		return type;

@@ -12,6 +12,7 @@ import net.voxelmine.blocks.Block;
 import net.voxelmine.blocks.BlockFluid;
 import net.voxelmine.blocks.BlockPos;
 import net.voxelmine.blocks.BlockRenderMode;
+import net.voxelmine.blocks.Material;
 import net.voxelmine.blocks.ModelPiece;
 import net.voxelmine.entity.EntityPos;
 import net.voxelmine.main.Voxelmine;
@@ -39,7 +40,7 @@ public class Chunk {
 	private boolean needsFluidUpdate = false;
 	public void tick() {
 		fluidTickCounter = (fluidTickCounter + 1) % 4;
-		if(fluidTickCounter == 0) {
+		if(fluidTickCounter == 0 && needsFluidUpdate) {
 			needsFluidUpdate = false;
 			for(int x = 0; x < SIZE; x++) {
 				for(int y = 0; y < HEIGHT; y++) {
@@ -107,8 +108,9 @@ public class Chunk {
 	public void setLocalBlock(BlockPos loc, int id) {
 		if(loc.getX() < 0 || loc.getX() >= SIZE) return;
 		if(loc.getY() < 0 || loc.getY() >= HEIGHT) return;
+		if(loc.getZ() < 0 || loc.getZ() >= DEPTH) return;
 		int y = loc.getY();
-		if(Block.get(id) instanceof BlockFluid) {
+		if(Block.get(id).getMaterial() == Material.WATER) {
 			needsFluidUpdate = true;
 			Block b = Block.get(blockMap[loc.getX()][y][loc.getZ()]);
 			while(b != null && b.getRenderMode() != BlockRenderMode.SOLID) {

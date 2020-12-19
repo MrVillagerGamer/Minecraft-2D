@@ -3,26 +3,21 @@ package net.voxelmine.entity;
 import net.voxelmine.items.Item;
 
 public class Inventory {
-	private int[] items;
-	private int[] counts;
+	private ItemStack[] stacks;
 	private int size;
 	private int sel = 0;
 	public Inventory(int size) {
-		items = new int[size];
-		counts = new int[size];
+		stacks = new ItemStack[size];
 		this.size = size;
+		for(int i = 0; i < size; i++) {
+			stacks[i] = new ItemStack(0, 0);
+		}
 	}
-	public int[] getItems() {
-		return items;
+	public ItemStack[] getStacks() {
+		return stacks;
 	}
-	public int[] getCounts() {
-		return counts;
-	}
-	public void setItems(int[] items) {
-		this.items = items;
-	}
-	public void setCounts(int[] counts) {
-		this.counts = counts;
+	public void setStacks(ItemStack[] stacks) {
+		this.stacks = stacks;
 	}
 	public int getSize() {
 		return size;
@@ -36,14 +31,15 @@ public class Inventory {
 	public void setSel(int sel) {
 		this.sel = sel;
 	}
-	public boolean hasItems(int item, int count) {
+	public boolean hasStack(ItemStack stack) {
 		int total = 0;
 		for(int i = 0; i < size; i++) {
-			if(items[i] == item) {
-				total += counts[i];
+			if(stacks[i].getItem() == stack.getItem()
+			&& stacks[i].getJsonData().equals(stack.getJsonData())) {
+				total += stacks[i].getCount();
 			}
 		}
-		if(total >= count) {
+		if(total >= stack.getCount()) {
 			return true;
 		}
 		return false;
@@ -52,18 +48,19 @@ public class Inventory {
 		if(slot1 == slot2 && other == this) {
 			return;
 		}
-		if(other.getId(slot2) == 0) {
-			int count = counts[slot1] / 2;
+		if(other.stacks[slot2].getItem() == 0) {
+			int count = stacks[slot1].getCount() / 2;
 			if(count == 0) {
 				return;
 			}
-			counts[slot1] -= count;
-			other.setCount(slot2, count);
-			other.setId(slot2, items[slot1]);
-		}else if(other.getId(slot2) == items[slot1]) {
-			other.setCount(slot2, other.getCount(slot2)+counts[slot1]);
-			counts[slot1] = 0;
-			items[slot1] = 0;
+			stacks[slot1].setCount(stacks[slot1].getCount() - count);
+			ItemStack stack = new ItemStack(stacks[slot1]);
+			stack.setCount(count);
+			other.stacks[slot2] = stack;
+		}else if(other.stacks[slot2].getItem() == stacks[slot1].getItem()
+				&& other.stacks[slot2].getJsonData().equals(stacks[slot1].getJsonData())) {
+			other.stacks[slot2].setCount(other.stacks[slot2].getCount()+stacks[slot1].getCount());
+			stacks[slot1] = new ItemStack(0, 0);
 		}
 	}
 	
@@ -71,91 +68,71 @@ public class Inventory {
 		if(slot1 == slot2) {
 			return;
 		}
-		if(items[slot2] == 0) {
-			int count = counts[slot1] / 2;
+		if(stacks[slot2].getItem() == 0) {
+			int count = stacks[slot1].getCount() / 2;
 			if(count == 0) {
 				return;
 			}
-			counts[slot1] -= count;
-			counts[slot2] = count;
-			items[slot2] = items[slot1];
-		}else if(items[slot2] == items[slot1]) {
-			counts[slot2] += counts[slot1];
-			counts[slot1] = 0;
-			items[slot1] = 0;
+			stacks[slot1].setCount(stacks[slot1].getCount() - count);
+			ItemStack stack = new ItemStack(stacks[slot1]);
+			stack.setCount(count);
+			stacks[slot2] = stack;
+		}else if(stacks[slot2].getItem() == stacks[slot1].getItem()
+				&& stacks[slot2].getJsonData().equals(stacks[slot1].getJsonData())) {
+			stacks[slot2].setCount(stacks[slot1].getCount());
+			stacks[slot1] = new ItemStack(0, 0);
 		}
 	}
 	public void swapSlots(int slot1, int slot2, Inventory other) {
-		int tempItem = items[slot1];
-		items[slot1] = other.getId(slot2);
-		other.setId(slot2, tempItem);
-		
-		int tempCount = counts[slot1];
-		counts[slot1] = other.getCount(slot2);
-		other.setCount(slot2, tempCount);
+		ItemStack tempItem = stacks[slot1];
+		stacks[slot1] = other.stacks[slot2];
+		other.stacks[slot2] = tempItem;
 	}
 	public void swapSlots(int slot1, int slot2) {
-		int tempItem = items[slot1];
-		items[slot1] = items[slot2];
-		items[slot2] = tempItem;
-		
-		int tempCount = counts[slot1];
-		counts[slot1] = counts[slot2];
-		counts[slot2] = tempCount;
-		
+		ItemStack tempItem = stacks[slot1];
+		stacks[slot1] = stacks[slot2];
+		stacks[slot2] = tempItem;
 	}
 	public int getLength() {
-		return items.length;
+		return stacks.length;
 	}
-	public int getId(int slot) {
-		return items[slot];
-	}
-	public int getCount(int slot) {
-		return counts[slot];
-	}
-	public void setCount(int slot, int count) {
-		counts[slot] = count;
-		if(count == 0) {
-			items[slot] = 0;
-		}
-	}
-	public void setId(int slot, int item) {
-		items[slot] = item;
-	}
-	public void delItems(int item, int count) {
-		if(hasItems(item, count)) {
+	public void delItems(ItemStack stack) {
+		if(hasStack(stack)) {
 			for(int i = 0; i < size; i++) {
-				if(items[i] == item && counts[i] == count) {
-					counts[i] = 0;
-					items[i] = 0;
+				if(stacks[i].getItem() == stack.getItem() && stacks[i].getCount() == stack.getCount()
+						&& stacks[i].getJsonData().equals(stack.getJsonData())) {
+					stacks[i] = new ItemStack(0, 0);
 					break;
-				}else if(items[i] == item && counts[i] > count) {
-					counts[i] -= count;
+				}else if(stacks[i].getItem() == stack.getItem() && stacks[i].getCount() > stack.getCount()
+						&& stacks[i].getJsonData().equals(stack.getJsonData())) {
+					stacks[i].setCount(stacks[i].getCount()-stack.getCount());
 					break;
-				}else if(items[i] == item && counts[i] < count) {
-					count -= counts[i];
-					counts[i] = 0;
-					items[i] = 0;
+				}else if(stacks[i].getItem() == stack.getItem() && stacks[i].getCount() < stack.getCount()
+						&& stacks[i].getJsonData().equals(stack.getJsonData())) {
+					stack.setCount(stack.getCount() - stacks[i].getCount());
+					stacks[i] = new ItemStack(0, 0);
 				}
 			}
 		}
 	}
-	public void addItems(int item, int count) {
+	public void addItems(ItemStack stack) {
 		boolean newStack = false;
 		boolean added = false;
 		for(int i = 0; i < size; i++) {
-			if(item == items[i] && count + counts[i] <= 64) {
-				counts[i] += count;
+			if(stacks[i].getItem() == stack.getItem() && stack.getCount() + stacks[i].getCount() <= 64
+					&& stacks[i].getJsonData().equals(stack.getJsonData())) {
+				stacks[i].setCount(stacks[i].getCount()+stack.getCount());
 				added = true;
 				break;
 			}
 		}
 		if(!added) {
 			for(int i = 0; i < size; i++) {
-				if(item == items[i] && count + counts[i] > 64) {
-					count -= 64 - counts[i];
-					counts[i] = 64;
-					if(count > 0) {
+				if(stacks[i].getItem() == stack.getItem() && stack.getCount() + stacks[i].getCount() <= 64
+						&& stacks[i].getJsonData().equals(stack.getJsonData())) {
+					stack.setCount(64 - stacks[i].getCount());
+					stacks[i].setCount(64);
+					if(stack.getCount() > 0) {
 						newStack = true;
 					}
 					added = true;
@@ -165,9 +142,9 @@ public class Inventory {
 		}
 		if(newStack || !added) {
 			for(int i = 0; i < size; i++) {
-				if(items[i] == 0) {
-					items[i] = item;
-					counts[i] = count;
+				if(stacks[i].getItem() == 0) {
+					ItemStack stack2 = new ItemStack(stack);
+					stacks[i] = stack2;
 					break;
 				}
 			}
@@ -178,5 +155,11 @@ public class Inventory {
 	}
 	public void setSelectedSlot(int sel) {
 		this.sel = sel;
+	}
+	public ItemStack getStack(int sel) {
+		return stacks[sel];
+	}
+	public void setStack(int sel, ItemStack stack) {
+		stacks[sel] = stack;
 	}
 }
