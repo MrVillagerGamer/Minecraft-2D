@@ -3,11 +3,13 @@ package net.voxelmine.items;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
 import net.voxelmine.blocks.Block;
+import net.voxelmine.blocks.BlockPos;
+import net.voxelmine.entity.Entity;
+import net.voxelmine.entity.ItemStack;
 
 public class Item {
 	public static final Item[] ITEMS = new Item[512];
@@ -21,14 +23,14 @@ public class Item {
 	public static final Item FURNACE = new Item(Block.FURNACE.getId());
 	public static final Item SAND = new Item(Block.SAND.getId());
 	public static final Item STICK = new Item(256).setImage(0, 2);
-	public static final Item WOOD_SWORD = new Item(257).setImage(3, 0).setToolType(ToolType.SWORD).setToolTier(1);
-	public static final Item WOOD_SHOVEL = new Item(258).setImage(2, 0).setToolType(ToolType.SHOVEL).setToolTier(1);
-	public static final Item WOOD_PICKAXE = new Item(259).setImage(1, 0).setToolType(ToolType.PICKAXE).setToolTier(1);
-	public static final Item WOOD_AXE = new Item(260).setImage(0, 0).setToolType(ToolType.AXE).setToolTier(1);
-	public static final Item STONE_SWORD = new Item(261).setImage(3, 1).setToolType(ToolType.SWORD).setToolTier(2);
-	public static final Item STONE_SHOVEL = new Item(262).setImage(2, 1).setToolType(ToolType.SHOVEL).setToolTier(2);
-	public static final Item STONE_PICKAXE = new Item(263).setImage(1, 1).setToolType(ToolType.PICKAXE).setToolTier(2);
-	public static final Item STONE_AXE = new Item(264).setImage(0, 1).setToolType(ToolType.AXE).setToolTier(2);
+	public static final Item WOOD_SWORD = new Item(257).setImage(3, 0).setToolType(ToolType.SWORD).setToolTier(1).setMaxDamage(59);
+	public static final Item WOOD_SHOVEL = new Item(258).setImage(2, 0).setToolType(ToolType.SHOVEL).setToolTier(1).setMaxDamage(3);
+	public static final Item WOOD_PICKAXE = new Item(259).setImage(1, 0).setToolType(ToolType.PICKAXE).setToolTier(1).setMaxDamage(59);
+	public static final Item WOOD_AXE = new Item(260).setImage(0, 0).setToolType(ToolType.AXE).setToolTier(1).setMaxDamage(59);
+	public static final Item STONE_SWORD = new Item(261).setImage(3, 1).setToolType(ToolType.SWORD).setToolTier(2).setMaxDamage(131);
+	public static final Item STONE_SHOVEL = new Item(262).setImage(2, 1).setToolType(ToolType.SHOVEL).setToolTier(2).setMaxDamage(131);
+	public static final Item STONE_PICKAXE = new Item(263).setImage(1, 1).setToolType(ToolType.PICKAXE).setToolTier(2).setMaxDamage(131);
+	public static final Item STONE_AXE = new Item(264).setImage(0, 1).setToolType(ToolType.AXE).setToolTier(2).setMaxDamage(131);
 	public static final Item WORKBENCH = new Item(Block.WORKBENCH.getId());
 	public static final Item CHEST = new Item(Block.CHEST.getId());
 	public static final Item WATER = new Item(Block.WATER.getId());
@@ -49,6 +51,7 @@ public class Item {
 	private int id;
 	private ToolType toolType;
 	private int toolTier;
+	private int maxDamage;
 	
 	public Item(int id) {
 		if(atlas == null) {
@@ -60,6 +63,11 @@ public class Item {
 		}
 		ITEMS[id] = this;
 		this.id = id;
+		this.maxDamage = 0;
+	}
+	public Item setMaxDamage(int maxDamage) {
+		this.maxDamage = maxDamage;
+		return this;
 	}
 	public Item setToolType(ToolType toolType) {
 		this.toolType = toolType;
@@ -76,7 +84,7 @@ public class Item {
 		Block b = Block.get(id);
 		// TODO: Render block models in inventory
 		if(img == null && b != null) {
-			return b.getStateFromMeta(0).getModel().getPieces()[0].getTex();
+			return b.getStateFromMeta(0).getModel().getPieces()[0].getSideTex();
 		}
 		return img;
 	}
@@ -89,5 +97,15 @@ public class Item {
 	}
 	public int getToolTier() {
 		return toolTier;
+	}
+	public void onUse(Entity user, BlockPos pos, ItemStack stack) {
+		if(maxDamage > 0) {
+			if(stack.getDamage() < maxDamage) {
+				stack.setDamage(stack.getDamage()+1);
+			}else {
+				stack.setItem(0);
+				stack.setCount(0);
+			}
+		}
 	}
 }

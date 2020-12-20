@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
 import net.voxelmine.entity.Inventory;
+import net.voxelmine.entity.ItemStack;
 import net.voxelmine.gui.Alignment;
 import net.voxelmine.input.Input;
 import net.voxelmine.items.Item;
@@ -29,8 +30,7 @@ public class GuiSlotGroup extends GuiComponent {
 			int cx = 20 * (i % cols);
 			int cy = 20 * (i / cols);
 			slots[i] = new GuiSlot(align, x+cx, y+cy);
-			slots[i].setId(inv.getStack(i).getItem());
-			slots[i].setCount(inv.getStack(i).getCount());
+			slots[i].setStack(inv.getStack(i));
 		}
 		selSlot = inv.getSelectedSlot();
 	}
@@ -70,12 +70,10 @@ public class GuiSlotGroup extends GuiComponent {
 			}
 		}
 		for(int i = 0; i < slots.length; i++) {
-			slots[i].setId(inv.getStack(i).getItem());
-			slots[i].setCount(inv.getStack(i).getCount());
+			slots[i].setStack(inv.getStack(i));
 			if(i == movedSlot && inv == movedInv) {
-				movedItem = slots[i].getId();
-				slots[i].setId(0);
-				slots[i].setCount(0);
+				movedItem = slots[i].getStack().getItem();
+				slots[i].setStack(new ItemStack(0, 0));
 			}
 			if(i == selSlot) {
 				slots[i].setSelected(true);
@@ -107,6 +105,12 @@ public class GuiSlotGroup extends GuiComponent {
 			g.setColor(Color.BLACK);
 			int slen = Integer.toString(inv.getStack(movedSlot).getCount()).length()==1?8:2;
 			g.drawString(Integer.toString(inv.getStack(movedSlot).getCount()), x1+slen*sz, y1+14*sz);
+			
+			if(inv.getStack(movedSlot).getDamage() != 0) {
+				g.setColor(new Color(1.0f, 0.0f, 0.0f));
+				//int dlen = Integer.toString(inv.getStack(movedSlot).getDamage()).length()==1?8:2;
+				g.drawString(Integer.toString(inv.getStack(movedSlot).getDamage()), x1, y1+14*sz);
+			}
 		}
 	}
 }

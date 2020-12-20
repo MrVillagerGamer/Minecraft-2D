@@ -34,8 +34,7 @@ public class Inventory {
 	public boolean hasStack(ItemStack stack) {
 		int total = 0;
 		for(int i = 0; i < size; i++) {
-			if(stacks[i].getItem() == stack.getItem()
-			&& stacks[i].getJsonData().equals(stack.getJsonData())) {
+			if(stack.canStackWith(stacks[i])) {
 				total += stacks[i].getCount();
 			}
 		}
@@ -57,8 +56,7 @@ public class Inventory {
 			ItemStack stack = new ItemStack(stacks[slot1]);
 			stack.setCount(count);
 			other.stacks[slot2] = stack;
-		}else if(other.stacks[slot2].getItem() == stacks[slot1].getItem()
-				&& other.stacks[slot2].getJsonData().equals(stacks[slot1].getJsonData())) {
+		}else if(other.stacks[slot2].canStackWith(stacks[slot1])) {
 			other.stacks[slot2].setCount(other.stacks[slot2].getCount()+stacks[slot1].getCount());
 			stacks[slot1] = new ItemStack(0, 0);
 		}
@@ -77,8 +75,7 @@ public class Inventory {
 			ItemStack stack = new ItemStack(stacks[slot1]);
 			stack.setCount(count);
 			stacks[slot2] = stack;
-		}else if(stacks[slot2].getItem() == stacks[slot1].getItem()
-				&& stacks[slot2].getJsonData().equals(stacks[slot1].getJsonData())) {
+		}else if(stacks[slot2].canStackWith(stacks[slot1])) {
 			stacks[slot2].setCount(stacks[slot1].getCount());
 			stacks[slot1] = new ItemStack(0, 0);
 		}
@@ -99,16 +96,13 @@ public class Inventory {
 	public void delItems(ItemStack stack) {
 		if(hasStack(stack)) {
 			for(int i = 0; i < size; i++) {
-				if(stacks[i].getItem() == stack.getItem() && stacks[i].getCount() == stack.getCount()
-						&& stacks[i].getJsonData().equals(stack.getJsonData())) {
+				if(stack.canStackWith(stacks[i]) && stacks[i].getCount() == stack.getCount()) {
 					stacks[i] = new ItemStack(0, 0);
 					break;
-				}else if(stacks[i].getItem() == stack.getItem() && stacks[i].getCount() > stack.getCount()
-						&& stacks[i].getJsonData().equals(stack.getJsonData())) {
+				}else if(stack.canStackWith(stacks[i]) && stacks[i].getCount() > stack.getCount()) {
 					stacks[i].setCount(stacks[i].getCount()-stack.getCount());
 					break;
-				}else if(stacks[i].getItem() == stack.getItem() && stacks[i].getCount() < stack.getCount()
-						&& stacks[i].getJsonData().equals(stack.getJsonData())) {
+				}else if(stack.canStackWith(stacks[i]) && stacks[i].getCount() < stack.getCount()) {
 					stack.setCount(stack.getCount() - stacks[i].getCount());
 					stacks[i] = new ItemStack(0, 0);
 				}
@@ -119,8 +113,7 @@ public class Inventory {
 		boolean newStack = false;
 		boolean added = false;
 		for(int i = 0; i < size; i++) {
-			if(stacks[i].getItem() == stack.getItem() && stack.getCount() + stacks[i].getCount() <= 64
-					&& stacks[i].getJsonData().equals(stack.getJsonData())) {
+			if(stack.canStackWith(stacks[i]) && stack.getCount() + stacks[i].getCount() <= 64) {
 				stacks[i].setCount(stacks[i].getCount()+stack.getCount());
 				added = true;
 				break;
@@ -128,8 +121,7 @@ public class Inventory {
 		}
 		if(!added) {
 			for(int i = 0; i < size; i++) {
-				if(stacks[i].getItem() == stack.getItem() && stack.getCount() + stacks[i].getCount() <= 64
-						&& stacks[i].getJsonData().equals(stack.getJsonData())) {
+				if(stack.canStackWith(stacks[i]) && stack.getCount() + stacks[i].getCount() <= 64) {
 					stack.setCount(64 - stacks[i].getCount());
 					stacks[i].setCount(64);
 					if(stack.getCount() > 0) {

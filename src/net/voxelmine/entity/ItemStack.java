@@ -1,18 +1,28 @@
 package net.voxelmine.entity;
 
-public class ItemStack {
+import java.io.Serializable;
+
+public class ItemStack implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String jsonData;
-	private int item, count;
+	private int item, count, damage;
 	public ItemStack(int item, int count) {
-		this(item, count, "{}");
+		this(item, count, 0, "{}");
 	}
-	public ItemStack(int item, int count, String jsonData) {
+	public ItemStack(int item, int count, int damage, String jsonData) {
 		this.item = item;
 		this.count = count;
 		this.jsonData = jsonData;
+		this.damage = damage;
 	}
 	public ItemStack(ItemStack stk) {
-		this(stk.item, stk.count, stk.jsonData);
+		this(stk.item, stk.count, stk.damage, stk.jsonData);
+	}
+	public boolean canStackWith(ItemStack stk) {
+		return stk.item == item && stk.damage == damage && stk.jsonData.equals(jsonData);
 	}
 	public int getItem() {
 		return item;
@@ -34,5 +44,11 @@ public class ItemStack {
 	}
 	public void setJsonData(String jsonData) {
 		this.jsonData = jsonData;
+	}
+	public int getDamage() {
+		return damage;
+	}
+	public void setDamage(int damage) {
+		this.damage = damage;
 	}
 }

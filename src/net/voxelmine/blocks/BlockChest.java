@@ -28,7 +28,7 @@ public class BlockChest extends Block implements ITileEntityProvider {
 	@Override
 	public ItemStack getDrop(BlockPos pos) {
 		World world = Voxelmine.getInstance().getWorld();
-		ItemStack stk = new ItemStack(getId(), 1, world.getTileEntity(pos).writeJson());
+		ItemStack stk = new ItemStack(getId(), 1, 0, world.getTileEntity(pos).writeJson());
 		return stk;
 	}
 }

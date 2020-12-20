@@ -15,7 +15,7 @@ public class Block {
 	public static final Block[] BLOCKS = new Block[256];
 	public static final int RENDER_SIZE = Voxelmine.WIDTH/33;
 	public static final Block AIR = new Block(0, Material.AIR, 0, 0);
-	public static final Block GRASS = new Block(1, Material.GROUND, 0, 0).setToolType(ToolType.SHOVEL);
+	public static final Block GRASS = new Block(1, Material.GROUND, 0, 0, 12, 0).setToolType(ToolType.SHOVEL);
 	public static final Block DIRT = new Block(2, Material.GROUND, 1, 0).setToolType(ToolType.SHOVEL);
 	public static final Block STONE = new BlockStone(3, Material.ROCK, 2, 0).setToolType(ToolType.PICKAXE).setToolTier(1);
 	public static final Block WOOD = new Block(4, Material.WOOD, 3, 0).setToolType(ToolType.AXE);
@@ -45,13 +45,14 @@ public class Block {
 	}
 	private BlockRenderMode renderMode;
 	protected static BufferedImage atlas;
-	private BufferedImage img;
+	private BufferedImage imgSide;
+	private BufferedImage imgTop;
 	private int toolTier;
 	private ToolType toolType;
 	private int id;
 	protected BlockState defaultState;
 	private Material mat;
-	public Block(int id, Material mat, int texX, int texY) {
+	public Block(int id, Material mat, int sideTexX, int sideTexY, int topTexX, int topTexY) {
 		this.mat = mat;
 		if(mat == Material.AIR) {
 			renderMode = BlockRenderMode.EMPTY;
@@ -68,11 +69,16 @@ public class Block {
 				e.printStackTrace();
 			}
 		}
-		ModelData model = new ModelData(new ModelPiece(0, 0, 1, 1, texX, texY));
+		ModelData model = new ModelData(new ModelPiece(0, 0, 1, 1, sideTexX, sideTexY, topTexX, topTexY));
 		model.bake(atlas);
+		this.imgSide = atlas.getSubimage(sideTexX*8, sideTexY*8, 8, 8);
+		this.imgTop = atlas.getSubimage(topTexX*8, topTexY*8, 8, 8);
 		this.defaultState = new BlockState(model);
 		BLOCKS[id] = this;
 		this.id = id;
+	}
+	public Block(int id, Material mat, int texX, int texY) {
+		this(id, mat, texX, texY, texX, texY);
 	}
 	public Material getMaterial() {
 		return mat;

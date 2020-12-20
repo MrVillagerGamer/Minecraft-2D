@@ -4,15 +4,17 @@ import java.awt.image.BufferedImage;
 
 public class ModelPiece {
 	private float minX, minY, maxX, maxY;
-	private int texX, texY;
-	private BufferedImage img;
-	public ModelPiece(float minX, float minY, float maxX, float maxY, int texX, int texY) {
+	private int sideTexX, sideTexY, topTexX, topTexY;
+	private BufferedImage topTex, sideTex;
+	public ModelPiece(float minX, float minY, float maxX, float maxY, int sideTexX, int sideTexY, int topTexX, int topTexY) {
 		this.minX = minX;
 		this.minY = minY;
 		this.maxX = maxX;
 		this.maxY = maxY;
-		this.texX = texX;
-		this.texY = texY;
+		this.sideTexX = sideTexX;
+		this.sideTexY = sideTexY;
+		this.topTexX = topTexX;
+		this.topTexY = topTexY;
 	}
 	public float getMinX() {
 		return minX;
@@ -26,16 +28,53 @@ public class ModelPiece {
 	public float getMaxY() {
 		return maxY;
 	}
-	public int getTexX() {
-		return texX;
+	public int getSideTexX() {
+		return sideTexX;
 	}
-	public int getTexY() {
-		return texY;
+	public void setSideTexX(int sideTexX) {
+		this.sideTexX = sideTexX;
 	}
-	public void setTex(BufferedImage img) {
-		this.img = img;
+	public int getSideTexY() {
+		return sideTexY;
 	}
-	public BufferedImage getTex() {
-		return img;
+	public void setSideTexY(int sideTexY) {
+		this.sideTexY = sideTexY;
 	}
+	public int getTopTexX() {
+		return topTexX;
+	}
+	public void setTopTexX(int topTexX) {
+		this.topTexX = topTexX;
+	}
+	public int getTopTexY() {
+		return topTexY;
+	}
+	public void setTopTexY(int topTexY) {
+		this.topTexY = topTexY;
+	}
+	public BufferedImage getTopTex() {
+		return topTex;
+	}
+	public void setTopTex(BufferedImage topTex) {
+		this.topTex = topTex;
+	}
+	public BufferedImage getSideTex() {
+		return sideTex;
+	}
+	public void setSideTex(BufferedImage sideTex) {
+		this.sideTex = sideTex;
+	}
+	public void setMinX(float minX) {
+		this.minX = minX;
+	}
+	public void setMinY(float minY) {
+		this.minY = minY;
+	}
+	public void setMaxX(float maxX) {
+		this.maxX = maxX;
+	}
+	public void setMaxY(float maxY) {
+		this.maxY = maxY;
+	}
+	
 }

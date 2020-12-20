@@ -5,6 +5,9 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
+import net.voxelmine.blocks.Block;
+import net.voxelmine.blocks.BlockPos;
+import net.voxelmine.entity.ItemStack;
 import net.voxelmine.gui.Alignment;
 import net.voxelmine.input.Input;
 import net.voxelmine.items.Item;
@@ -13,8 +16,7 @@ public class GuiSlot extends GuiComponent {
 	BufferedImage tex, tex2;
 	int x, y;
 	boolean clicked = false, clicked2 = false, sel = false;
-	int item;
-	int count;
+	ItemStack stack;
 	public GuiSlot(Alignment alignment, int x, int y) {
 		super(alignment);
 		tex = img.getSubimage(0, 0, 20, 20);
@@ -23,23 +25,22 @@ public class GuiSlot extends GuiComponent {
 		this.x = (x+getOriginX(20))*sz;
 		this.y = (y+getOriginY(20))*sz;
 	}
-	public void setCount(int count) {
-		this.count = count;
+	public void setStack(ItemStack stack) {
+		this.stack = stack;
 	}
-	public void setId(int item) {
-		this.item = item;
-	}
-	public int getId() {
-		return item;
+	public ItemStack getStack() {
+		return stack;
 	}
 	public void setSelected(boolean sel) {
 		this.sel = sel;
 	}
 	@Override
 	public void render(Graphics g) {
+		int count = stack.getCount();
+		int damage = stack.getDamage();
 		int sz = GuiComponent.SCALE;
 		int bsz = 14*sz;
-		Item item = Item.get(this.item);
+		Item item = Item.get(stack.getItem());
 		g.drawImage(tex, x, y, 20*sz, 20*sz, null);
 		if(sel) {
 			g.drawImage(tex2, x, y, 20*sz, 20*sz, null);
@@ -52,6 +53,12 @@ public class GuiSlot extends GuiComponent {
 			g.setColor(Color.BLACK);
 			int slen = Integer.toString(count).length()==1?8:2;
 			g.drawString(Integer.toString(count), x1+slen*sz, y1+14*sz);
+		
+			if(damage != 0) {
+				g.setColor(new Color(1.0f, 0.0f, 0.0f));
+				//int dlen = Integer.toString(damage).length()==1?8:2;
+				g.drawString(Integer.toString(damage), x1, y1+14*sz);
+			}
 		}
 	}
 	@Override

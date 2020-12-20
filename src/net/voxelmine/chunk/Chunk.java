@@ -159,7 +159,7 @@ public class Chunk {
 		for(int i = 0; i < SIZE; i++) {
 			for(int j = 0; j < HEIGHT; j++) {
 				for(int z = DEPTH-1; z >= 0; z--) {
-					if(Block.get(blockMap[i][j][z]).getRenderMode() != BlockRenderMode.SOLID) {
+					if(Block.get(blockMap[i][j][z]).getRenderMode() == BlockRenderMode.EMPTY) {
 						continue;
 					}
 					if(i < sx || i > ex || j < sy || j > ey) {
@@ -167,24 +167,22 @@ public class Chunk {
 					}
 					Block b = Block.get(blockMap[i][j][z]);
 					for(ModelPiece piece : b.getStateFromMeta(metaMap[i][j][z]).getModel().getPieces()) {
-						BufferedImage img = piece.getTex();
+						BufferedImage img = piece.getSideTex();
 						int szw = (int) (img.getWidth() / 8f * sz);
 						int szh = (int) (img.getHeight() / 8f * sz);
 						int btox = (int) (piece.getMinX() * sz);
 						int btoy = (int) (piece.getMinY() * sz);
-						g.drawImage(img, (int)(i*sz-off.getX()*sz+offset.getX()*sz+sw/2+btox), (int)(sh-j*sz+off.getY()*sz+offset.getY()*sz-sh/2+btoy), szw, szh, null);
-						if(z == 1) {
-							g.setColor(new Color(0, 0, 0, lightMap[i][j]));
-							g.fillRect((int)(i*sz-off.getX()*sz+offset.getX()*sz+sw/2+btox), (int)(sh-j*sz+off.getY()*sz+offset.getY()*sz-sh/2+btoy), szw, szh);
-							g.setColor(new Color(0, 0, 0, 0.5f));
-							g.fillRect((int)(i*sz-off.getX()*sz+offset.getX()*sz+sw/2+btox), (int)(sh-j*sz+off.getY()*sz+offset.getY()*sz-sh/2+btoy), szw, szh);
-						}else {
-							g.setColor(new Color(0, 0, 0, lightMap[i][j]));
-							g.fillRect((int)(i*sz-off.getX()*sz+offset.getX()*sz+sw/2+btox), (int)(sh-j*sz+off.getY()*sz+offset.getY()*sz-sh/2+btoy), szw, szh);
-						}
+						g.drawImage(img, (int)(i*sz-off.getX()*sz+offset.getX()*sz+sw/2+btox), (int)(sh-j*sz+off.getY()*sz+offset.getY()*sz-sh/2+btoy-sz*z*0.33f), szw, szh, null);
+						img = piece.getTopTex();
+						g.drawImage(img, (int)(i*sz-off.getX()*sz+offset.getX()*sz+sw/2+btox), (int)(sh-j*sz+off.getY()*sz+offset.getY()*sz-sh/2-sz*z*0.33f-sz*0.33f), szw, (int)(szh*0.33f), null);	
+
+						g.setColor(new Color(0, 0, 0, Math.min(lightMap[i][j]+0.33f, 1)));
+						g.fillRect((int)(i*sz-off.getX()*sz+offset.getX()*sz+sw/2+btox), (int)(sh-j*sz+off.getY()*sz+offset.getY()*sz-sh/2+btoy-sz*z*0.33f), szw, szh);
+						g.setColor(new Color(0, 0, 0, lightMap[i][j]));
+						g.fillRect((int)(i*sz-off.getX()*sz+offset.getX()*sz+sw/2+btox), (int)(sh-j*sz+off.getY()*sz+offset.getY()*sz-sh/2-sz*z*0.33f-sz*0.33f), szw, (int)(szh*0.33f));
 					}
 					
-				}
+				}/*
 				for(int z = DEPTH-1; z >= 0; z--) {
 					if(Block.get(blockMap[i][j][z]).getRenderMode() != BlockRenderMode.FLUID) {
 						continue;
@@ -194,7 +192,7 @@ public class Chunk {
 					}
 					Block b = Block.get(blockMap[i][j][z]);
 					for(ModelPiece piece : b.getStateFromMeta(metaMap[i][j][z]).getModel().getPieces()) {
-						BufferedImage img = piece.getTex();
+						BufferedImage img = piece.getSideTex();
 						int szw = (int) (img.getWidth() / 8f * sz);
 						int szh = (int) (img.getHeight() / 8f * sz);
 						int btox = (int) (piece.getMinX() * sz);
@@ -211,7 +209,7 @@ public class Chunk {
 						}
 					}
 					
-				}
+				}*/
 			}
 		}
 	}

@@ -137,7 +137,9 @@ public class EntityPlayer extends Entity{
 					&& breakLoc.getY() == mouseBlock.getY()) {
 				breakTime += delta;
 				int bb = getBlock(mouseBlock);
-				if(breakTime >= computeDestroyTime(bb)) {
+				if(breakTime >= computeDestroyTime(bb) && Item.forBlock(Block.get(bb)) != null) {
+					ItemStack stk = inv.getStack(inv.getSelectedSlot());
+					if(Item.get(stk.getItem()) != null) Item.get(stk.getItem()).onUse(this, mouseBlock, stk);
 					inv.addItems(Block.get(bb).getDrop(mouseBlock));
 					breakBlock(mouseBlock);
 					breakTime = 0;
@@ -261,7 +263,7 @@ public class EntityPlayer extends Entity{
 				};
 				float time = computeDestroyTime(bb);
 				if((int)(breakTime/time*10.0f) <= 9) {
-					BufferedImage img = cracks[(int)(breakTime/time*10.0f)].getStateFromMeta(0).getModel().getPieces()[0].getTex();
+					BufferedImage img = cracks[(int)(breakTime/time*10.0f)].getStateFromMeta(0).getModel().getPieces()[0].getSideTex();
 					g.drawImage(img, (int)(x*sz-off.getX()*sz+sw/2), (int)(sh-y*sz+off.getY()*sz-sh/2), sz, sz, null);
 				}
 			}

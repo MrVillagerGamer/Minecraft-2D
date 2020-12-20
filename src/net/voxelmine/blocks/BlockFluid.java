@@ -6,7 +6,7 @@ public class BlockFluid extends Block {
 		super(id, mat, texX, texY);
 		states = new BlockState[16];
 		for(int i = 0; i < 16; i++) {
-			ModelData model = new ModelData(new ModelPiece(0, 1f/8f*(i/2), 1, 1, texX, texY));
+			ModelData model = new ModelData(new ModelPiece(0, 1f/8f*(i/2), 1, 1, texX, texY, texX, texY));
 			model.bake(atlas);
 			states[i] = new BlockState(model);
 		}
